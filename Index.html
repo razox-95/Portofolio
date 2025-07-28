@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Le_R — Développeur & Créateur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* NOUVELLE PALETTE DE COULEURS - Sombre & Violet */
+            --bg-dark: #0a0a0a;
+            --bg-card: #121212;
+            --text: #e0e0e0;
+            --text-muted: #888;
+            --accent: #9b59b6; /* Violet Améthyste */
+            --accent-hover: #8e44ad;
+            --border: #222;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            cursor: none; /* On cache le curseur de base */
+            
+            /* FOND ANIMÉ EN DÉGRADÉ */
+            background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0a0a0a, #121212);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* CURSEUR PERSONNALISÉ */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        .cursor.grow {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(155, 89, 182, 0.2);
+        }
+        
+        /* NOUVEL ÉCRAN DE CHARGEMENT */
+        #loader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            animation: fadeOutLoader 1s ease 3s forwards;
+        }
+
+        .loader-content {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .loader-content span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: letterFadeInUp 0.5s ease forwards;
+        }
+        /* Animation décalée pour chaque lettre */
+        .loader-content span:nth-child(1) { animation-delay: 0.5s; }
+        .loader-content span:nth-child(2) { animation-delay: 0.6s; }
+        .loader-content span:nth-child(3) { animation-delay: 0.7s; }
+        .loader-content span:nth-child(4) { animation-delay: 0.8s; }
+
+        @keyframes letterFadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOutLoader {
+            to { opacity: 0; visibility: hidden; }
+        }
+        
+        /* Conteneur principal qui apparaît après le chargement */
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 80px 20px;
+            opacity: 0;
+            animation: fadeInContent 1s ease forwards;
+            animation-delay: 3s; /* Doit correspondre à la fin du loader */
+        }
+        
+        @keyframes fadeInContent {
+            to { opacity: 1; }
+        }
+
+        /* ANIMATIONS AU DÉFILEMENT */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        header h1 {
+            font-size: 4rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        header p {
+            color: var(--accent);
+            font-size: 1.3rem;
+            margin-top: 0.5rem;
+        }
+
+        section {
+            margin-bottom: 70px;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+            /* TITRE EN DÉGRADÉ */
+            background: linear-gradient(90deg, var(--accent), var(--text));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px); /* Effet de soulèvement */
+            border-color: var(--accent);
+            box-shadow: 0 0 25px rgba(155, 89, 182, 0.2);
+        }
+        
+        .card p {
+            line-height: 1.7;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+        .card p strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .skills-list li {
+            padding: 10px 5px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #1a1a1a;
+            transition: background-color 0.3s, padding-left 0.3s;
+        }
+        .skills-list li:last-child {
+            border-bottom: none;
+        }
+        .skills-list li:hover {
+            background-color: rgba(155, 89, 182, 0.1);
+            padding-left: 15px;
+        }
+        
+        .projects-list li {
+            padding: 8px 0;
+        }
+        .projects-list strong {
+            color: var(--accent);
+        }
+        .projects-list span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .contact-btn {
+            background: var(--accent);
+            color: #fff;
+            font-weight: bold;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: none; /* Pour que notre curseur custom soit visible */
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .contact-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { cursor: auto; } /* Désactiver le curseur custom sur mobile */
+            .cursor { display: none; }
+            header h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+
+    <div id="loader">
+      <div class="loader-content">
+          <span>L</span><span>e</span><span>_</span><span>R</span>
+      </div>
+    </div>
+
+    <div class="container">
+        <header class="reveal">
+            <h1>Le_R</h1>
+            <p>Développeur Roblox & Créateur Web</p>
+        </header>
+
+        <section id="about">
+            <h2 class="reveal">À propos de moi</h2>
+            <div class="card reveal">
+                <p>Passionné par la création numérique et le code depuis 2022, je conçois des expériences interactives sur <strong>Roblox</strong> et des sites web performants. Je transforme des idées complexes en solutions fluides et esthétiques, que ce soit pour des outils, des jeux ou des applications web.</p>
+                <p>Actif dans la communauté francophone, notamment sur des serveurs comme <strong>Neptune Script</strong> ou <strong>La Lyks</strong>, j'aime partager mes connaissances et collaborer sur des projets ambitieux, y compris dans le monde du ferroviaire sur <strong>Unreal Engine</strong>.</p>
+            </div>
+        </section>
+        
+        <section id="services">
+            <h2 class="reveal">Mes Services</h2>
+            <div class="card reveal">
+                <ul class="skills-list">
+                    <li>⚙️ Développement de scripts et systèmes complexes pour Roblox</li>
+                    <li>🎨 Création de sites web vitrines et portfolios sur-mesure</li>
+                    <li>🤖 Conception de bots Discord et automatisations (webhooks, API)</li>
+                    <li>🛡️ Mise en place de systèmes Anti-Cheat et de modération</li>
+                    <li>💡 Design d'interfaces utilisateur (UI/UX) modernes et intuitives</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2 class="reveal">Compétences Techniques</h2>
+            <div class="card reveal">
+                <h3>Langages & Développement</h3>
+                <ul class="skills-list">
+                    <li>🚀 <strong>Lua / Luau</strong> — Maîtrise de l'écosystème Roblox Studio</li>
+                    <li>🌐 <strong>HTML, CSS, JavaScript</strong> — Création web pure, sans frameworks</li>
+                    <li>🐍 <strong>Python</strong> — Scripting, bots, et automatisation</li>
+                </ul>
+            </div>
+            <div class="card reveal">
+                <h3>Outils & Technologies</h3>
+                <ul class="skills-list">
+                    <li>🎨 <strong>UI/UX Design</strong> — Conception d'interfaces (Figma, Studio)</li>
+                    <li>🔗 <strong>API & Webhooks</strong> — Connexion de services (Discord, Trello...)</li>
+                    <li>🚄 <strong>Unreal Engine</strong> — Notions de développement de jeux</li>
+                    <li>💻 <strong>Git & GitHub</strong> — Versioning et collaboration</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2 class="reveal">Projets Notables</h2>
+            <div class="card reveal">
+                <ul class="projects-list">
+                    <li><strong>Le_R Executor</strong> &mdash; <span>Exécuteur Roblox avec UI custom avancée.</span></li>
+                    <li><strong>Sentinel Anti-Cheat</strong> &mdash; <span>Système de détection intelligent avec logs Discord.</span></li>
+                    <li><strong>Projet Ferroviaire UE5</strong> &mdash; <span>Participation à la création d'un jeu de simulation de train (équipe de 5).</span></li>
+                    <li><strong>Générateur RATP/SNCF</strong> &mdash; <span>Outil web pour créer des fiches de service pour les communautés de simulation.</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2 class="reveal">Contact</h2>
+            <div class="card reveal">
+                <p>Le meilleur moyen de me contacter est via Discord. N'hésite pas à m'ajouter !</p>
+                <p>Discord ID : <strong id="discordId">le_r_dev</strong></p> <button class="contact-btn" id="copyBtn">Copier l'ID</button>
+            </div>
+        </section>
+
+        <footer>
+            &copy; 2025 Le_R • Conçu avec passion.
+        </footer>
+    </div>
+
+    <script>
+        // --- LOGIQUE POUR LE CURSEUR PERSONNALISÉ ---
+        const cursor = document.querySelector('.cursor');
+        const interactiveElements = document.querySelectorAll('a, button, .card');
+
+        window.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+        });
+
+        // --- LOGIQUE POUR LE BOUTON COPIER ---
+        const copyBtn = document.getElementById('copyBtn');
+        const discordId = document.getElementById('discordId').innerText;
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(discordId).then(() => {
+                const originalText = copyBtn.innerText;
+                copyBtn.innerText = 'Copié ! ✅';
+                setTimeout(() => {
+                    copyBtn.innerText = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Erreur lors de la copie', err);
+            });
+        });
+
+        // --- LOGIQUE POUR L'ANIMATION AU DÉFILEMENT (INTERSECTION OBSERVER) ---
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Optionnel : arrêter d'observer l'élément une fois qu'il est visible
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1 // L'élément est considéré visible à 10%
+        });
+
+        revealElements.forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
